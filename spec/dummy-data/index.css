@@ -1,0 +1,5 @@
+@import "./icomoon/style";
+
+.logo {
+  background-image: url("./fake-logo.png");
+}

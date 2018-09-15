@@ -1,0 +1,55 @@
+@font-face {
+  font-family: 'icomoon';
+  src:
+    url('fonts/icomoon.ttf?4bdqj') format('truetype'),
+    url('fonts/icomoon.woff?4bdqj') format('woff'),
+    url('fonts/icomoon.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icomoon-"], [class*=" icomoon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icomoon-arrow_back:before {
+  content: "\e5c4";
+}
+.icomoon-arrow_forward:before {
+  content: "\e5c8";
+}
+.icomoon-phone:before {
+  content: "\e0cd";
+}
+.icomoon-check:before {
+  content: "\e5ca";
+}
+.icomoon-close:before {
+  content: "\e5cd";
+}
+.icomoon-expand_less:before {
+  content: "\e5ce";
+}
+.icomoon-expand_more:before {
+  content: "\e5cf";
+}
+.icomoon-mail_outline:before {
+  content: "\e0e1";
+}
+.icomoon-menu:before {
+  content: "\e5d2";
+}
+.icomoon-pin_drop:before {
+  content: "\e55e";
+}

@@ -1,27 +1,8 @@
-![Test Coverage-shield-badge-1](https://img.shields.io/badge/Test%20Coverage-100%25-brightgreen.svg)
+![Test Coverage-shield-badge-1](https://img.shields.io/badge/Test%20Coverage-82.83%25-yellow.svg)
 
-# Node Module Seed
+# Concat Scss
 
-A repo to kickstart your next typescript private node module.
-
-### Whats included:
-
-* [Typescript](https://www.typescriptlang.org/) - typed superset of JavaScript
-* [GruntJs](https://gruntjs.com/) - task and build tool
-* [Jasmine](https://jasmine.github.io/) - tests written in Jasmine
-* [Istanbul](https://istanbul.js.org/) - test coverage
-* [Webpack](https://webpack.js.org/) - module bundler
-
-# Getting started
-
-To start your new node module using this seed app, clone this repo to a new
-directory:
-
-```
-git clone https://github.com/nathan-andosen/node-module-seed.git my-module-name
-cd my-module-name
-git remote rm origin
-```
+Concat scss or css files into one file
 
 # Development
 
@@ -48,29 +29,6 @@ _Tests are automatically ran when you do a build._
 ``npm run test`` - Run the tests. The tests will be ran in a nodejs environment.
 You can run the tests in a browser environment by opening the file 
 _/spec/in-browser/SpecRunner.html_.
-
-# Using the module
-
-### Typescript
-
-```javascript
-import { ClassOne } from 'node-module-seed';
-let classOne = new ClassOne();
-```
-
-### Javascript (browser)
-
-Simple include the minified file in your page. Webpack is used to compile the 
-minified file, it places all the code into a global property called XApp. You
-can change this in the _/webpack.config.js_ file.
-
-```
-<script src="dist/my-class.js" type="text/javascript"></script>
-
-var classOne = new XApp.ClassOne();
-```
-
-
 
 ## License
 

@@ -1,8 +1,4 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./my-class-one"));
-__export(require("./my-class-two"));
+const concat_scss_1 = require("./concat-scss");
+module.exports = concat_scss_1.ConcatScss;
 //# sourceMappingURL=index.js.map

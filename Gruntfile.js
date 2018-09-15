@@ -12,9 +12,6 @@ module.exports = function(grunt) {
     tsc : {
       cmd : bashCmd + './node_modules/.bin/tsc'
     },
-    compileBrowserTests : {
-      cmd : 'bash ./scripts/browser-compile-unit-tests.sh'
-    },
     testCoverage: {
       cmd: 'bash ./scripts/test-coverage.sh'
     }
@@ -38,6 +35,6 @@ module.exports = function(grunt) {
   // our grunt commands
   grunt.registerTask("builddev", ["exec:tsc", "exec:testCoverage"]);
   grunt.registerTask("dev", ["builddev", "watch:dev"]);
-  grunt.registerTask("test", ["exec:tsc", "exec:testCoverage", "exec:compileBrowserTests"]);
+  grunt.registerTask("test", ["exec:tsc", "exec:testCoverage"]);
   grunt.registerTask("coverage", ["exec:tsc", "exec:testCoverage"]);
 };
