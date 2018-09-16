@@ -122,6 +122,7 @@ describe('Concat Scss', () => {
             expect(output.indexOf('https://getbootstrap.com/') === -1).toEqual(true);
             expect(output.indexOf('bootstrap/scss/bootstrap.scss') === -1).toEqual(true);
             expect(output.indexOf('$testVar: #000;') > -1).toEqual(true);
+            expect(output.indexOf('$globalTestVar: #999;') > -1).toEqual(true);
             done();
         }).catch((err) => {
             throw err;
@@ -137,7 +138,7 @@ describe('Concat Scss', () => {
         concatScss.concat(options).then((results) => {
             const output = results.output;
             expect(output.indexOf(pngBase64Image) > -1).toEqual(true);
-            expect(output.indexOf("url('./icomoon.svg')") > -1).toEqual(true);
+            expect(output.indexOf("url('icomoon.svg')") > -1).toEqual(true);
             done();
         }).catch((err) => {
             throw err;
@@ -153,8 +154,8 @@ describe('Concat Scss', () => {
         };
         concatScss.concat(options).then((results) => {
             const output = results.output;
-            expect(output.indexOf("url('./icomoon.svg')") > -1).toEqual(true);
-            expect(output.indexOf('url("./fake-logo.png")') > -1).toEqual(true);
+            expect(output.indexOf("url('icomoon.svg')") > -1).toEqual(true);
+            expect(output.indexOf('url("fake-logo.png")') > -1).toEqual(true);
             done();
         }).catch((err) => {
             throw err;

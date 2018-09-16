@@ -17,7 +17,7 @@ class FsUtils {
             filepath = path.join(parseState.rootDir, 'node_modules', assetPath);
         }
         this.fetchFileContents(filepath, (err, data) => {
-            if (data) {
+            if (!err) {
                 cb(filepath, data);
                 return;
             }

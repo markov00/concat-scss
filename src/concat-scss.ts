@@ -78,12 +78,20 @@ export class ConcatScss {
       if(importPaths) {
         fsUtils.fetchFileContentsFromPaths(0, importPaths, state, 
         (filePath, contents) => {
-          state.previousDirs.push(state.currentDir);
-          state.currentDir = path.dirname(filePath);
-          this.iterateLinesInFile(0, contents.split('\n'), () => {
-            state.currentDir = state.previousDirs.pop();
+          if(!filePath) {
+            console.log('Concat-scss warning: file not found for import: '
+              + line);
+          }
+          if(contents) {
+            state.previousDirs.push(state.currentDir);
+            state.currentDir = (filePath) ? path.dirname(filePath) : state.currentDir;
+            this.iterateLinesInFile(0, contents.split('\n'), () => {
+              state.currentDir = state.previousDirs.pop();
+              this.iterateLinesInFile(++index, lines, cb);
+            });
+          } else {
             this.iterateLinesInFile(++index, lines, cb);
-          });
+          }
         });
       } else {
         // import path must be ignored

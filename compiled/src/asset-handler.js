@@ -21,7 +21,7 @@ class AssetHandler {
         const destDir = path.dirname(state.destFile);
         const destFile = path.join(destDir, filename);
         fs.copy(filePath, destFile, (err) => {
-            const newLine = line.replace(urlPath, './' + filename);
+            const newLine = line.replace(urlPath, filename);
             cb(newLine);
         });
     }
