@@ -62,6 +62,7 @@ $testVar: #000;
 }
 ```
 
+### Concat-scss script
 ```typescript
 const ConcatScss = require('@thenja/concat-scss');
 
@@ -103,6 +104,7 @@ $color-primary: #000;
 }
 ```
 
+### Concat-scss script
 ```typescript
 const ConcatScss = require('@thenja/concat-scss');
 
@@ -124,7 +126,7 @@ concatScss.concat(options)
 
 ## Ignore chunks of scss code example
 
-In your scss code, add the following comments, anything inbetween these comments will be excluded from the output
+In your scss code, add the following comments, anything in between these comments will be excluded from the output
 
 ```scss
 // concat-scss-ignore-start
