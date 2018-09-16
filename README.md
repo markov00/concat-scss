@@ -9,7 +9,7 @@ Concat scss or css files into one file
 * Base64 encode asset urls inline into the scss file
 * Option available to copy assets to destination directory instead of base64 encoding them directly into the scss file
 * Option to compile scss to css using node-sass
-* Option to ignore certain @import statements or ignore whole chunks of scss code using start and ignore comment tags
+* Option to ignore certain @import statements or ignore whole chunks of scss code using start and end ignore comment tags
 
 # How to use
 
