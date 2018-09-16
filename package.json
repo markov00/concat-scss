@@ -4,7 +4,6 @@
   "main": "compiled/src/index.js",
   "types": "compiled/src/index.d.ts",
   "version": "1.0.0",
-  "private": true,
   "dependencies": {
     "fs-extra": "7.0.0",
     "mime": "2.3.1",
