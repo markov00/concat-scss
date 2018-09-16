@@ -1,0 +1,9 @@
+$varOne: #000;
+
+// concat-scss-ignore-start
+$varTwo: #ccc;
+// concat-scss-ignore-end
+
+.test {
+  color: $varOne;
+}

@@ -3,3 +3,6 @@ debug/
 dist/
 dev-only/
 compiled/spec
+spec/
+scripts/
+coverage/

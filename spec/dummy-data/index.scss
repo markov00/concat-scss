@@ -1,5 +1,8 @@
 @import "./icomoon/style";
 
+$color-primary: #000;
+
 .logo {
+  color: $color-primary;
   background-image: url("./fake-logo.png");
 }

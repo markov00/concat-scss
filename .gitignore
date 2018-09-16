@@ -4,6 +4,7 @@ node_modules/
 *.swp
 *.swo
 .nyc_output/
+.vscode/
 
 # OS generated files #
 ######################

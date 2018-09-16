@@ -1,2 +1,6 @@
-declare const base64EncodeLine: (currentDir: string, line: string, cb: (newLine: string) => void) => void;
-export default base64EncodeLine;
+import { iParseState } from './interfaces';
+export declare class AssetHandler {
+    base64EncodeLine(state: iParseState, line: string, cb: (newLine: string) => void): void;
+}
+declare const assetHandler: AssetHandler;
+export { assetHandler };

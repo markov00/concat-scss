@@ -1,22 +1,12 @@
-export interface iConcatOptions {
-    src: string;
-    dest: string;
-    rootDir?: string;
-    ignoreImports?: string[];
-    outputCss?: boolean;
-}
-export interface iConcatResults {
-    output: string;
-}
+import { iConcatOptions, iConcatResults } from './interfaces';
+export declare type iConcatOptions = iConcatOptions;
 export declare class ConcatScss {
-    private fetchFileContents;
-    private fetchFileContentsFromPaths;
     private insertIntoString;
-    private getImportPath;
+    private getAllPossibleImportPaths;
     private iterateLinesInFile;
     private resetState;
-    private setIgnoreImports;
-    private getSrcAndDestPaths;
-    private writeOutputToFile;
+    private setRemoveImports;
+    private compileSass;
+    private writeOutput;
     concat(options: iConcatOptions): Promise<iConcatResults>;
 }

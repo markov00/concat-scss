@@ -1,42 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
+const sass = require("node-sass");
 const fs = require("fs-extra");
-const base64_encode_line_1 = require("./base64-encode-line");
-;
-;
+const asset_handler_1 = require("./asset-handler");
+const fs_utils_1 = require("./fs-utils");
 let state = null;
 const ignoreStartTag = 'concat-scss-ignore-start';
 const ignoreEndTag = 'concat-scss-ignore-end';
 class ConcatScss {
-    fetchFileContents(path, cb) {
-        fs.readFile(path, 'utf-8', (err, data) => { cb(err, data); });
-    }
-    fetchFileContentsFromPaths(index, paths, cb) {
-        if (index >= paths.length) {
-            cb(null, null);
-            return;
-        }
-        let filepath = path.join(state.currentDir, paths[index]);
-        if (paths[index].indexOf('~') > -1) {
-            const assetPath = paths[index].substring(1);
-            filepath = path.join(state.rootDir, 'node_modules', assetPath);
-        }
-        this.fetchFileContents(filepath, (err, data) => {
-            if (data) {
-                cb(filepath, data);
-                return;
-            }
-            this.fetchFileContentsFromPaths(++index, paths, cb);
-        });
-    }
     insertIntoString(str, char, pos) {
         return [str.slice(0, pos), char, str.slice(pos)].join('');
     }
-    getImportPath(line) {
+    getAllPossibleImportPaths(line) {
         const strChar = (line.indexOf("'") > -1) ? "'" : "\"";
         let path = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
-        if (state.ignoreImports[path])
+        if (state.removeImports[path])
             return null;
         path = path.replace('.scss', '').replace('.css', '');
         const underscoreScss = this.insertIntoString(path, '_', path.lastIndexOf('/') + 1);
@@ -61,9 +40,9 @@ class ConcatScss {
             this.iterateLinesInFile(++index, lines, cb);
         }
         else if (line.indexOf('@import') > -1) {
-            const importPaths = this.getImportPath(line);
+            const importPaths = this.getAllPossibleImportPaths(line);
             if (importPaths) {
-                this.fetchFileContentsFromPaths(0, importPaths, (filePath, contents) => {
+                fs_utils_1.fsUtils.fetchFileContentsFromPaths(0, importPaths, state, (filePath, contents) => {
                     state.previousDirs.push(state.currentDir);
                     state.currentDir = path.dirname(filePath);
                     this.iterateLinesInFile(0, contents.split('\n'), () => {
@@ -77,75 +56,75 @@ class ConcatScss {
             }
         }
         else {
-            base64_encode_line_1.default(state.currentDir, line, (newLine) => {
+            asset_handler_1.assetHandler.parseUrlAsset(state, line, (newLine) => {
                 state.output += newLine + '\n';
                 this.iterateLinesInFile(++index, lines, cb);
             });
         }
     }
-    resetState() {
+    resetState(options) {
+        const rootDir = (options.rootDir) ? options.rootDir : process.cwd();
+        const paths = fs_utils_1.fsUtils.getAbsoluteSrcAndDestPaths(options.src, options.dest, rootDir);
         state = {
+            srcFile: paths.src,
+            destFile: paths.dest,
             currentDir: '',
             previousDirs: [],
             output: '',
             ignoringLines: false,
-            rootDir: '',
-            ignoreImports: {}
+            rootDir: rootDir,
+            removeImports: {},
+            copyAssetsToDest: (options.copyAssetsToDest)
+                ? options.copyAssetsToDest : false
         };
     }
-    setIgnoreImports(imports) {
+    setRemoveImports(imports) {
         if (imports) {
             for (let i = 0; i < imports.length; i++) {
-                state.ignoreImports[imports[i]] = true;
+                state.removeImports[imports[i]] = true;
             }
         }
     }
-    getSrcAndDestPaths(options) {
-        let srcPath;
-        let destPath;
-        if (path.isAbsolute(options.src)) {
-            srcPath = options.src;
-        }
-        else {
-            srcPath = path.join(process.cwd(), options.src);
-        }
-        if (path.isAbsolute(options.dest)) {
-            destPath = options.dest;
-        }
-        else {
-            destPath = path.join(process.cwd(), options.dest);
-        }
-        return { src: srcPath, dest: destPath };
+    compileSass(dest, cb) {
+        const cssDest = dest.replace('.scss', '.css');
+        sass.render({
+            file: dest
+        }, function (err, result) {
+            if (err)
+                throw err;
+            fs.writeFile(cssDest, result.css.toString(), {}, function (err) {
+                cb();
+            });
+        });
     }
-    writeOutputToFile(output, dest, cb) {
-        fs.ensureDir(path.dirname(dest)).then(() => {
-            fs.writeFile(dest, output, {}, (err) => { cb(err); });
-        }).catch((err) => {
-            cb(err);
+    writeOutput(dest, outputCss, cb) {
+        fs_utils_1.fsUtils.writeOutputToFile(state.output, dest, (err) => {
+            if (err)
+                throw err;
+            if (outputCss) {
+                this.compileSass(dest, () => {
+                    cb();
+                });
+            }
+            else {
+                cb();
+            }
         });
     }
     concat(options) {
         return new Promise((resolve, reject) => {
-            if (!options.src) {
-                reject(new Error('Please provide the src option'));
+            if (!options.src || !options.dest) {
+                reject(new Error('Please provide the src & dest options'));
                 return;
             }
-            if (!options.dest) {
-                reject(new Error('Please provide the dest option'));
-                return;
-            }
-            this.resetState();
-            state.rootDir = (options.rootDir) ? options.rootDir : process.cwd();
-            console.log('rootDir = ' + state.rootDir);
-            this.setIgnoreImports(options.ignoreImports);
-            const paths = this.getSrcAndDestPaths(options);
-            this.fetchFileContents(paths.src, (err, fileContents) => {
+            this.resetState(options);
+            this.setRemoveImports(options.removeImports);
+            fs_utils_1.fsUtils.fetchFileContents(state.srcFile, (err, fileContents) => {
                 if (err)
                     throw err;
-                state.currentDir = path.dirname(paths.src);
+                state.currentDir = path.dirname(state.srcFile);
                 this.iterateLinesInFile(0, fileContents.split('\n'), () => {
-                    console.log(paths.dest);
-                    this.writeOutputToFile(state.output, paths.dest, (err) => {
+                    this.writeOutput(state.destFile, options.outputCss, () => {
                         resolve({
                             output: state.output
                         });
