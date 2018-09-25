@@ -14,15 +14,26 @@ class ConcatScss {
     }
     getAllPossibleImportPaths(line) {
         const strChar = (line.indexOf("'") > -1) ? "'" : "\"";
-        let path = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
-        if (state.removeImports[path])
+        let importPath = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
+        if (state.removeImports[importPath])
             return null;
-        path = path.replace('.scss', '').replace('.css', '');
-        const underscoreScss = this.insertIntoString(path, '_', path.lastIndexOf('/') + 1);
+        const dirPath = path.join(state.currentDir, importPath);
+        console.log('dirPath = ' + dirPath);
+        try {
+            const stats = fs.lstatSync(dirPath);
+            if (!stats.isFile() && stats.isDirectory()) {
+                importPath += (importPath[importPath.length - 1] === '/')
+                    ? 'index' : path.sep + 'index';
+            }
+        }
+        catch (ex) { }
+        console.log('importPath = ' + importPath);
+        importPath = importPath.replace('.scss', '').replace('.css', '');
+        const underscoreScss = this.insertIntoString(importPath, '_', importPath.lastIndexOf('/') + 1);
         return [
             underscoreScss + '.scss',
-            path + '.scss',
-            path + '.css'
+            importPath + '.scss',
+            importPath + '.css'
         ];
     }
     iterateLinesInFile(index, lines, cb) {

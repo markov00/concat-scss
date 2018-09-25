@@ -42,14 +42,26 @@ export class ConcatScss {
    */
   private getAllPossibleImportPaths(line: string) {
     const strChar = (line.indexOf("'") > -1) ? "'" : "\"";
-    let path = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
-    if(state.removeImports[path]) return null;
-    path = path.replace('.scss', '').replace('.css', '');
-    const underscoreScss = this.insertIntoString(path, '_', path.lastIndexOf('/') + 1);
+    let importPath 
+      = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
+    if(state.removeImports[importPath]) return null;
+    // check if its a directory
+    const dirPath = path.join(state.currentDir, importPath);
+    try{
+      const stats = fs.lstatSync(dirPath);
+      if(!stats.isFile() && stats.isDirectory()) {
+        // import statement points to directory, should be index file inside
+        importPath += (importPath[importPath.length - 1] === '/')
+          ? 'index' : path.sep + 'index';
+      }
+    } catch(ex) {}
+    importPath = importPath.replace('.scss', '').replace('.css', '');
+    const underscoreScss = 
+      this.insertIntoString(importPath, '_', importPath.lastIndexOf('/') + 1);
     return [ 
       underscoreScss + '.scss', 
-      path + '.scss', 
-      path +'.css' 
+      importPath + '.scss', 
+      importPath +'.css' 
     ];
   }
 

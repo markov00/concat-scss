@@ -192,4 +192,21 @@ describe('Concat Scss', () => {
       throw err;
     });
   });
+
+  it('spec 11: should find index file automagically in a directory', (done) => {
+    const concatScss = new ConcatScss();
+    const options: iConcatOptions = {
+      src: './spec/dummy-data/test/index.scss',
+      dest: './spec/dummy-data/output/scss-spec-11.scss'
+    };
+    concatScss.concat(options).then((results) => {
+      const output = results.output;
+      // bootstrap should have been imported
+      expect(output.indexOf('.index-text') > -1).toEqual(true);
+      expect(output.indexOf('.abc-test-class') > -1).toEqual(true);
+      done();
+    }).catch((err) => {
+      throw err;
+    });
+  });
 });

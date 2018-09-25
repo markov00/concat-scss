@@ -10,7 +10,7 @@ describe('Concat Scss', () => {
     beforeAll(() => {
         unit_test_helper_1.unitTestHelper.emptyOutputDirectory();
     });
-    it('spec 1: should conact scss with fonts and images', (done) => {
+    fit('spec 1: should conact scss with fonts and images', (done) => {
         const concatScss = new concat_scss_1.ConcatScss();
         const options = {
             src: './spec/dummy-data/index.scss',
@@ -171,6 +171,21 @@ describe('Concat Scss', () => {
             const output = results.output;
             expect(output.indexOf('https://getbootstrap.com/') > -1).toEqual(true);
             expect(output.indexOf('$testVar: #000;') > -1).toEqual(true);
+            done();
+        }).catch((err) => {
+            throw err;
+        });
+    });
+    it('spec 11: should find index file automagically in a directory', (done) => {
+        const concatScss = new concat_scss_1.ConcatScss();
+        const options = {
+            src: './spec/dummy-data/test/index.scss',
+            dest: './spec/dummy-data/output/scss-spec-11.scss'
+        };
+        concatScss.concat(options).then((results) => {
+            const output = results.output;
+            expect(output.indexOf('.index-text') > -1).toEqual(true);
+            expect(output.indexOf('.abc-test-class') > -1).toEqual(true);
             done();
         }).catch((err) => {
             throw err;
