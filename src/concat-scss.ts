@@ -14,7 +14,17 @@ let state: iParseState = null;
 const ignoreStartTag = 'concat-scss-ignore-start';
 const ignoreEndTag = 'concat-scss-ignore-end';
 
+interface iPossiblePathResults {
+  possiblePaths: string[];
+  possibleDir: string;
+}
 
+/**
+ * Class used to concatenate scss / css files into one file
+ *
+ * @export
+ * @class ConcatScss
+ */
 export class ConcatScss {
 
   /**
@@ -33,6 +43,30 @@ export class ConcatScss {
 
 
   /**
+   * Get a url path of an index file that may be inside a directory
+   *
+   * @private
+   * @param {string} dirPath
+   * @param {string} importPath
+   * @returns {string}
+   * @memberof ConcatScss
+   */
+  private getIndexPathInsideDirectory(dirPath: string, 
+  importPath: string): string {
+    let indexPath = null;
+    try{
+      const stats = fs.lstatSync(dirPath);
+      if(stats.isDirectory()) {
+        // import statement points to directory, should be index file inside
+        indexPath = (importPath[importPath.length - 1] === '/')
+          ? importPath + 'index' : importPath + path.sep + 'index';
+      }
+    } catch(ex) {}
+    return indexPath;
+  }
+
+
+  /**
    * Get all the possible import paths for an @import statement in a scss file
    *
    * @private
@@ -40,29 +74,30 @@ export class ConcatScss {
    * @returns
    * @memberof ConcatScss
    */
-  private getAllPossibleImportPaths(line: string) {
+  private getAllPossibleImportPaths(line: string): string[] {
     const strChar = (line.indexOf("'") > -1) ? "'" : "\"";
     let importPath 
       = line.substring(line.indexOf(strChar) + 1, line.lastIndexOf(strChar));
     if(state.removeImports[importPath]) return null;
-    // check if its a directory
     const dirPath = path.join(state.currentDir, importPath);
-    try{
-      const stats = fs.lstatSync(dirPath);
-      if(!stats.isFile() && stats.isDirectory()) {
-        // import statement points to directory, should be index file inside
-        importPath += (importPath[importPath.length - 1] === '/')
-          ? 'index' : path.sep + 'index';
-      }
-    } catch(ex) {}
+    let importIndexPath = this.getIndexPathInsideDirectory(dirPath, importPath);
     importPath = importPath.replace('.scss', '').replace('.css', '');
     const underscoreScss = 
       this.insertIntoString(importPath, '_', importPath.lastIndexOf('/') + 1);
-    return [ 
+    const possiblePaths = [ 
       underscoreScss + '.scss', 
       importPath + '.scss', 
       importPath +'.css' 
     ];
+    if(importIndexPath) {
+      const _index = 
+        this.insertIntoString(importIndexPath, '_', 
+        importIndexPath.lastIndexOf('index'));
+      possiblePaths.push(_index + '.scss');
+      possiblePaths.push(importIndexPath + '.scss');
+      possiblePaths.push(importIndexPath + '.css');
+    }
+    return possiblePaths;
   }
 
 
@@ -86,9 +121,9 @@ export class ConcatScss {
       state.ignoringLines = true;
       this.iterateLinesInFile(++index, lines, cb);
     } else if(line.indexOf('@import') > -1) {
-      const importPaths = this.getAllPossibleImportPaths(line);
-      if(importPaths) {
-        fsUtils.fetchFileContentsFromPaths(0, importPaths, state, 
+      const possiblePaths = this.getAllPossibleImportPaths(line);
+      if(possiblePaths) {
+        fsUtils.fetchFileContentsFromPaths(0, possiblePaths, state, 
         (filePath, contents) => {
           if(!filePath) {
             console.log('Concat-scss warning: file not found for import: '
@@ -96,7 +131,8 @@ export class ConcatScss {
           }
           if(contents) {
             state.previousDirs.push(state.currentDir);
-            state.currentDir = (filePath) ? path.dirname(filePath) : state.currentDir;
+            state.currentDir = (filePath) 
+              ? path.dirname(filePath) : state.currentDir;
             this.iterateLinesInFile(0, contents.split('\n'), () => {
               state.currentDir = state.previousDirs.pop();
               this.iterateLinesInFile(++index, lines, cb);

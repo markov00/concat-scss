@@ -1,8 +1,8 @@
-![Test Coverage-shield-badge-1](https://img.shields.io/badge/Test%20Coverage-70.34%25-yellow.svg)
+![Test Coverage-shield-badge-1](https://img.shields.io/badge/Test%20Coverage-95.39%25-brightgreen.svg)
 
 # Concat Scss
 
-Concat scss or css files into one file
+Concatenate scss / css files into one file
 
 # Features
 

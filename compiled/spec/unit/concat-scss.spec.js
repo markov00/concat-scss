@@ -10,7 +10,7 @@ describe('Concat Scss', () => {
     beforeAll(() => {
         unit_test_helper_1.unitTestHelper.emptyOutputDirectory();
     });
-    fit('spec 1: should conact scss with fonts and images', (done) => {
+    it('spec 1: should conact scss with fonts and images', (done) => {
         const concatScss = new concat_scss_1.ConcatScss();
         const options = {
             src: './spec/dummy-data/index.scss',

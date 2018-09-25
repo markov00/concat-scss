@@ -3,7 +3,7 @@
   "description": "Concat scss or css files into one file",
   "main": "compiled/src/index.js",
   "types": "compiled/src/index.d.ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "fs-extra": "7.0.0",
     "mime": "2.3.1",

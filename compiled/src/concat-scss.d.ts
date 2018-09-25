@@ -2,6 +2,7 @@ import { iConcatOptions, iConcatResults } from './interfaces';
 export declare type iConcatOptions = iConcatOptions;
 export declare class ConcatScss {
     private insertIntoString;
+    private getIndexPathInsideDirectory;
     private getAllPossibleImportPaths;
     private iterateLinesInFile;
     private resetState;
